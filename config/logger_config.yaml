@@ -1,0 +1,37 @@
+# Cleaned and simplified loguru configuration YAML
+formatters:
+  simple: '<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> {name} | <level>{level: <8}</level> | {extra[logger_name]} |<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>'
+
+handlers:
+  console:
+    sink: ext://sys.stderr
+    level: DEBUG
+    format: simple
+    # loggers:
+    #   - logger_name: default_logger
+    #     level: INFO
+  file_handler:
+    sink: ./log/test_log.log
+    level: DEBUG
+    format: simple
+
+    # loggers:
+    #   - logger_name: default_logger
+    #     level: INFO
+    #   - logger_name: next_logger
+    #     leve: DEBUG
+loggers:
+  # root:
+  #   handlers:
+  #     console2:
+
+  logger_a:
+    handlers:
+      file_handler:
+        level: ERROR
+      console:
+        level: INFO
+  logger_b:
+    handlers:
+      file_handler:
+        level: INFO
