@@ -30,7 +30,7 @@ loggers:
       file_handler:
         level: ERROR
       console:
-        level: INFO
+        level: TRACE
   logger_b:
     handlers:
       file_handler:

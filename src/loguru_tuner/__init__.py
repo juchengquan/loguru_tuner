@@ -2,6 +2,6 @@
 Logger module initialization.
 """
 
-from .logger import logger
+from loguru_tuner.logger import logger
 
 __all__ = ["logger"]

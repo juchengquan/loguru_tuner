@@ -1,6 +1,23 @@
 """
 Type hints for enhanced loguru logger functionality.
 """
+import inspect
+from loguru._logger import Logger
+def get_all_methods(cls):
+    methods = []
+    for name, member in inspect.getmembers(cls, predicate=inspect.isfunction):
+        # Exclude built-in methods (dunder methods)
+        if not name.startswith('__'):
+            methods.append(name)
+    return methods
+
+# Get methods from MyClass (which implements MyProtocol)
+class_methods = get_all_methods(Logger)
+print(f"Methods in MyClass: {class_methods}")
+
+g = type("wtf", (Logger,), {})
+print(type(g))
+
 from typing import Protocol, Dict, Any, Union, Optional, Callable
 
 class BaseLogger(Protocol):
@@ -12,6 +29,10 @@ class BaseLogger(Protocol):
 
     def info(self, message: str, *args: Any, **kwargs: Any) -> None:
         """Log info message."""
+        ...
+    
+    def critical(self, message: str, *args: Any, **kwargs: Any) -> None:
+        """Log critical message."""
         ...
 
     def error(self, message: str, *args: Any, **kwargs: Any) -> None:
@@ -45,7 +66,7 @@ class EnhancedLogger(BaseLogger, Protocol):
         """Configure loguru logger from a YAML config file."""
         ...
 
-    def add_handler(self, handler_name: str, handler_conf: dict) -> None:
+    def add_handler(self, handler_name: str, handler_conf: dict, **kwargs) -> None:
         """Add a new handler to the logger."""
         ...
     
