@@ -1,99 +1,102 @@
 """
 Type hints for enhanced loguru logger functionality.
 """
-import inspect
 from loguru._logger import Logger
-def get_all_methods(cls):
-    methods = []
-    for name, member in inspect.getmembers(cls, predicate=inspect.isfunction):
-        # Exclude built-in methods (dunder methods)
-        if not name.startswith('__'):
-            methods.append(name)
-    return methods
+from typing import Protocol, Dict
+from loguru_tuner._utils import create_protocol_from_class
 
-# Get methods from MyClass (which implements MyProtocol)
-class_methods = get_all_methods(Logger)
-print(f"Methods in MyClass: {class_methods}")
 
-g = type("wtf", (Logger,), {})
-print(type(g))
+_BaseLogger = create_protocol_from_class(Logger)
 
-from typing import Protocol, Dict, Any, Union, Optional, Callable
-
-class BaseLogger(Protocol):
-    """Protocol defining base logger functionality."""
+class EnhancedLogger(_BaseLogger, Protocol):
+    """Protocol defining enhanced logger functionality for loguru_tuner.
     
-    def bind(self, **kwargs: Any) -> 'BaseLogger':
-        """Bind context variables."""
-        ...
-
-    def info(self, message: str, *args: Any, **kwargs: Any) -> None:
-        """Log info message."""
-        ...
-    
-    def critical(self, message: str, *args: Any, **kwargs: Any) -> None:
-        """Log critical message."""
-        ...
-
-    def error(self, message: str, *args: Any, **kwargs: Any) -> None:
-        """Log error message."""
-        ...
-
-    def warning(self, message: str, *args: Any, **kwargs: Any) -> None:
-        """Log warning message."""
-        ...
-
-    def debug(self, message: str, *args: Any, **kwargs: Any) -> None:
-        """Log debug message."""
-        ...
-
-    def remove(self, handler_id: Optional[Union[str, int]] = None) -> None:
-        """Remove a handler."""
-        ...
-
-    def add(self, sink: Union[str, Callable, Any], **kwargs: Any) -> int:
-        """Add a handler."""
-        ...
-
-    def configure(self, **kwargs: Any) -> None:
-        """Configure logger."""
-        ...
-
-class EnhancedLogger(BaseLogger, Protocol):
-    """Protocol defining enhanced logger functionality."""
+    This protocol extends the base Loguru Logger with additional methods
+    for configuration management, handler operations, and named loggers.
+    """
     
     def init_with_config(self, config_path: str) -> None:
-        """Configure loguru logger from a YAML config file."""
+        """Configure loguru logger from a YAML config file.
+        
+        Args:
+            config_path: Path to the YAML configuration file
+        """
         ...
 
-    def add_handler(self, handler_name: str, handler_conf: dict, **kwargs) -> None:
-        """Add a new handler to the logger."""
+    def add_handler(self, handler_name: str, handler_conf: dict, validate_handler: bool = True) -> None:
+        """Add a new handler to the logger.
+        
+        Args:
+            handler_name: Unique name for the handler
+            handler_conf: Configuration dictionary for the handler
+            validate_handler: Whether to validate that the handler doesn't already exist
+        """
         ...
     
     def remove_handler(self, handler_name: str) -> None:
-        """Remove a handler from the logger."""
+        """Remove a handler from the logger.
+        
+        Args:
+            handler_name: Name of the handler to remove
+        
+        Raises:
+            AssertionError: If the handler doesn't exist
+        """
         ...
 
     def add_logger(self, logger_name: str, logger_config: dict) -> None:
-        """Add a new logger configuration."""
+        """Add a new logger configuration with specified handlers.
+        
+        Args:
+            logger_name: Unique name for the logger
+            logger_config: Configuration dictionary for the logger
+            
+        Raises:
+            AssertionError: If the logger already exists or references non-existent handlers
+        """
         ...
 
     def get_logger(self, logger_name: str) -> 'EnhancedLogger':
-        """Get a logger by name."""
+        """Get a logger by name.
+        
+        Args:
+            logger_name: Name of the logger to retrieve
+            
+        Returns:
+            A bound logger instance with the specified name
+            
+        Raises:
+            AssertionError: If the logger doesn't exist
+        """
         ...
 
     def remove_logger(self, logger_name: str) -> None:
-        """Remove a logger by name."""
+        """Remove a logger by name.
+        
+        Args:
+            logger_name: Name of the logger to remove
+            
+        Raises:
+            AssertionError: If the logger doesn't exist
+        """
         ...
 
     @property
     def handlers_map(self) -> Dict[str, dict]:
-        """Get the handlers mapping."""
+        """Get the handlers mapping.
+        
+        Returns:
+            Dictionary mapping handler names to their configurations
+        """
         ...
 
     @property
     def loggers_map(self) -> Dict[str, dict]:
-        """Get the loggers mapping."""
+        """Get the loggers mapping.
+        
+        Returns:
+            Dictionary mapping logger names to their configurations
+        """
         ...
 
 # Re-export the Protocol

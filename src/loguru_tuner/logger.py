@@ -2,7 +2,7 @@
 Enhanced loguru logger with support for logger and handler mappings.
 """
 import sys  # noqa: F401 - when refraction, DO NOT REMOVE!  
-from typing import Dict, cast, Any, Union
+from typing import Dict, cast, Any
 from loguru import logger as _logger
 from loguru_tuner._logger_types import EnhancedLogger
 from loguru_tuner._utils import load_config, add_formatter_to_handlers, ensure_root_logger
@@ -212,23 +212,5 @@ def monkey_patch() -> None:
 
 # Re-export the enhanced logger
 monkey_patch()
+
 logger = cast(EnhancedLogger, _logger)
-
-
-def _add_handler(logger_instance: Any, handler_name: str, handler_conf: dict, handlers_map: dict) -> None:
-    """Add a handler to the logger and update handlers_map.
-    
-    Args:
-        logger_instance: The logger instance to add the handler to
-        handler_name: Name of the handler to add
-        handler_conf: Handler configuration
-        handlers_map: The handlers mapping to update
-    """
-    handler_conf = handler_conf.copy()  # Avoid mutating input
-    handler_conf["sink"] = _handle_external_sink(handler_conf["sink"])
-
-    handlers_map.setdefault(handler_name, {})["id"] = logger_instance.add(
-        **handler_conf,
-        filter=_create_loguru_filter(handler_name)
-    )
-
