@@ -5,19 +5,22 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "loguru-tuner"
 version = "0.1.0"
-description = "A sophisticated configuration orchestrator for Loguru logger"
+description = "A configuration orchestrator for Loguru logger"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.10"
 license = "MIT"
 keywords = ["loguru", "logging", "configuration", "yaml"]
 authors = [
-    {name = "Your Name", email = "your.email@example.com"}
+    {name = "juchengquan", email = "ju.chengquan@gmail.com"}
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: System :: Logging",
 ]
 dependencies = [
