@@ -169,13 +169,40 @@ def monkey_patch() -> None:
                 validate_handler=True
             )
         
-        def get_logger(self, logger_name: str) -> EnhancedLogger:
+        def get_logger(self: EnhancedLogger, logger_name: str) -> EnhancedLogger:
             """Get a logger by name."""
             assert logger_name in self.loggers_map, \
                 f"Logger {logger_name} does not exist!"
             return cast(EnhancedLogger, _logger.bind(logger_name=logger_name))
 
-        def remove_logger(self, logger_name: str) -> None:
+        def update_logger(self: EnhancedLogger, logger_name: str, logger_config: dict) -> None:
+            """Update a logger by name and configurations.
+            
+            Args:
+                logger_name: Name of the logger to update
+                logger_config: New configuration for the logger
+            """
+            assert logger_name in self.loggers_map, \
+                f"Logger {logger_name} does not exist!"
+
+            # Remove existing logger bindings from handlers
+            for handler_name, handler_info in self.handlers_map.items():
+                if logger_name in handler_info.get("loggers", {}):
+                    handler_info["loggers"].pop(logger_name)
+
+            # Update logger config in loggers map
+            self.loggers_map[logger_name] = logger_config
+
+            # Add new handler bindings
+            for handler_name, handler_params in logger_config.get("handlers", {}).items():
+                _update_handler_mapping(
+                    handler_name=handler_name,
+                    handler_params=handler_params if handler_params else {},
+                    logger_name=logger_name,
+                    handlers_map=self.handlers_map
+                )
+
+        def remove_logger(self: EnhancedLogger, logger_name: str) -> None:
             """Remove a logger by name."""
             assert logger_name in self.loggers_map, \
                 f"Logger {logger_name} does not exist!"
@@ -190,12 +217,12 @@ def monkey_patch() -> None:
 
         # Add property accessors for type hints
         @property
-        def handlers_map(self) -> Dict[str, dict]:
+        def handlers_map(self: EnhancedLogger) -> Dict[str, dict]:
             """Get the handlers mapping."""
             return self._patched_assets["handlers_map"]
             
         @property
-        def loggers_map(self) -> Dict[str, dict]:
+        def loggers_map(self: EnhancedLogger) -> Dict[str, dict]:
             """Get the loggers mapping."""
             return self._patched_assets["loggers_map"]
 
@@ -205,6 +232,7 @@ def monkey_patch() -> None:
         setattr(_logger.__class__, "remove_handler", remove_handler)
         setattr(_logger.__class__, "add_logger", add_logger)
         setattr(_logger.__class__, "get_logger", get_logger)
+        setattr(_logger.__class__, "update_logger", update_logger)
         setattr(_logger.__class__, "remove_logger", remove_logger)
 
         setattr(_logger.__class__, "handlers_map", handlers_map)

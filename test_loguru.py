@@ -15,7 +15,24 @@ if __name__ == "__main__":
     logger_a.info("Logging INFO - LOGGED")
     logger_a.warning("Logging WARN - LOGGED")
     logger_a.error("Logging ERROR - LOGGED")
-    logger_a.critical("Logging DEBUG - NOT LOGGED")
+    logger_a.critical("Logging CRITICAL - LOGGED")
+
+    logger.update_logger(
+        "logger_a", 
+        {
+            "handlers": {
+                "file_handler": {
+                    "level": "DEBUG"
+                }
+            }
+        }
+    )
+    logger_a.debug("Logging DEBUG - LOGGED")
+    logger_a.info("Logging INFO - LOGGED")
+    logger_a.warning("Logging WARN - LOGGED")
+    logger_a.error("Logging ERROR - LOGGED")
+    logger_a.critical("Logging CRITICAL - LOGGED")
+
 
     logger_b = logger.get_logger("logger_b")
     logger_b.debug("Logging DEBUG - NOT LOGGED")

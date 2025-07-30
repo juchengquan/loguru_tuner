@@ -70,6 +70,18 @@ class EnhancedLogger(_BaseLogger, Protocol):
         """
         ...
 
+    def update_logger(self, logger_name: str, logger_config: dict) -> None:
+        """Update an existing logger's configuration.
+        
+        Args:
+            logger_name: Name of the logger to update
+            logger_config: New configuration dictionary for the logger
+            
+        Raises:
+            AssertionError: If the logger doesn't exist or references non-existent handlers
+        """
+        ...
+        
     def remove_logger(self, logger_name: str) -> None:
         """Remove a logger by name.
         
